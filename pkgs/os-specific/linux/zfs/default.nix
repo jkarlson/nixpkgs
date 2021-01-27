@@ -26,7 +26,7 @@ let
     , rev ? "zfs-${version}"
     , isUnstable ? false
     , incompatibleKernelVersion ? null }:
-    if buildKernel &&
+    if false &&
       (incompatibleKernelVersion != null) &&
         versionAtLeast kernel.version incompatibleKernelVersion then
        throw ''
