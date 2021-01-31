@@ -19,6 +19,9 @@ let
     name = "opengl-drivers-32bit";
     paths = [ cfg.package32 ] ++ cfg.extraPackages32;
   };
+  realMesa = (pkgs.mesa.override {
+     galliumDrivers = ["radeonsi" "kmsro" "v3d" "vc4" "freedreno" "etnaviv" "nouveau" "tegra" "virgl" "lima" "panfrost" "swrast"];
+  }).overrideAttrs (attrs: { patches = attrs.patches ++ [./honeycomb.patch]; });
 
 in
 
@@ -150,7 +153,7 @@ in
     environment.sessionVariables.LD_LIBRARY_PATH = mkIf cfg.setLdLibraryPath
       ([ "/run/opengl-driver/lib" ] ++ optional cfg.driSupport32Bit "/run/opengl-driver-32/lib");
 
-    hardware.opengl.package = mkDefault pkgs.mesa.drivers;
+    hardware.opengl.package = mkForce realMesa.drivers;
     hardware.opengl.package32 = mkDefault pkgs.pkgsi686Linux.mesa.drivers;
 
     boot.extraModulePackages = optional (elem "virtualbox" videoDrivers) kernelPackages.virtualboxGuestAdditions;
